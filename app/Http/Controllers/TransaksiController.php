@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth; // <-- TAMBAHKAN BARIS INI
 
+// --- TAMBAHKAN BARIS-BARIS INI ---
+use App\Models\Transaksi;
+use App\Models\TransaksiDetail; // Sesuaikan dengan nama Model detail Anda
+use App\Models\Produk;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 class TransaksiController extends Controller
 {
     public function index()
@@ -15,57 +19,89 @@ class TransaksiController extends Controller
         return view('admin.transaksi.index', compact('produk'));
     }
 
-    public function store(Request $request)
+   public function store(Request $request)
     {
-        // Validasi keranjang tidak boleh kosong
-        if (empty($request->items)) {
-            return response()->json(['message' => 'Keranjang masih kosong!'], 422);
-        }
+        // 1. Validasi Input
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id_produk' => 'required',
+            'items.*.qty' => 'required|integer|min:1',
+            'total_harga' => 'required|numeric'
+        ]);
 
-        DB::beginTransaction();
         try {
-            $id_transaksi = 'TRX-' . strtoupper(Str::random(8));
-            
-            // 1. Simpan ke tabel Transaksi
-            DB::table('transaksi')->insert([
+            DB::beginTransaction();
+
+            // 2. Buat ID Transaksi Unik
+            // Contoh: TRX-20231025-ABCD
+            $id_transaksi = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(4));
+
+            // 3. Simpan Header Transaksi
+            $transaksi = Transaksi::create([
                 'id_transaksi' => $id_transaksi,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(), // Pastikan user sedang login
                 'tgl_transaksi' => now(),
                 'total_harga' => $request->total_harga,
                 'status' => 'selesai'
             ]);
 
-            // 2. Simpan Detail & Update Stok
+            // 4. Simpan Detail & Kurangi Stok
             foreach ($request->items as $item) {
-                DB::table('transaksi_details')->insert([
+                
+                // Pastikan produk ada sebelum disimpan
+                $produk = Produk::where('id_produk', $item['id_produk'])->first();
+                if (!$produk) {
+                    throw new \Exception("Produk dengan ID " . $item['id_produk'] . " tidak ditemukan.");
+                }
+
+                // Cek stok lagi agar aman
+                if ($produk->stok < $item['qty']) {
+                    throw new \Exception("Stok barang " . $produk->nama_produk . " tidak cukup!");
+                }
+
+                // Simpan ke tabel detail
+                // SESUAIKAN NAMA MODEL ANDA (TransaksiDetail atau TransaksiDetails)
+                TransaksiDetail::create([
                     'id_transaksi' => $id_transaksi,
-                    'id_produk' => $item['id_produk'],
-                    'qty' => $item['qty'],
-                    'subtotal' => $item['subtotal']
+                    'id_produk'    => $item['id_produk'],
+                    'nama_produk'  => $item['nama_produk'], // <--- INI YG ANDA MINTA
+                    'qty'          => $item['qty'],
+                    'harga_satuan' => $item['harga_jual'], // Mapping: JS kirim 'harga_jual', DB simpan 'harga_satuan'
+                    'subtotal'     => $item['subtotal']
                 ]);
 
                 // Kurangi Stok
-                DB::table('produk')->where('id_produk', $item['id_produk'])->decrement('stok', $item['qty']);
+                $produk->decrement('stok', $item['qty']);
             }
 
             DB::commit();
-            return response()->json(['message' => 'Transaksi Berhasil!', 'id' => $id_transaksi]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Transaksi berhasil disimpan',
+                'id_transaksi' => $id_transaksi
+            ], 200);
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Gagal: ' . $e->getMessage()], 500);
+            DB::rollback();
+            // Kirim pesan error asli agar terbaca di Inspect Element
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ], 500);
         }
     }
 public function history()
-{
-    $riwayat = DB::table('transaksi')
-        ->where('user_id', Auth::id())
-        ->orderBy('tgl_transaksi', 'desc')
-        ->get();
+    {
+        // Ambil data transaksi beserta user dan detail produknya
+        $transaksi = Transaksi::with(['user', 'details']) // <-- Load relasi 'details'
+                        ->orderBy('tgl_transaksi', 'desc')
+                        ->get();
 
-    return view('admin.transaksi.history', compact('riwayat'));
-}
-
+        return view('admin.transaksi.history', compact('transaksi'));
+    }
 public function show($id)
 {
     // 1. Ambil data transaksi utama
@@ -83,4 +119,13 @@ public function show($id)
 
     return view('admin.transaksi.print', compact('transaksi', 'details', 'toko'));
 }
+
+public function cetak($id)
+    {
+        // Ambil data transaksi berdasarkan ID
+        $transaksi = Transaksi::with(['details', 'user'])->findOrFail($id);
+        
+        // Tampilkan view cetak (struk)
+        return view('admin.transaksi.print', compact('transaksi'));
+    }
 }

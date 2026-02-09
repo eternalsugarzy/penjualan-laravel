@@ -3,100 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cetak Nota - {{ $transaksi->id_transaksi }}</title>
+    <title>Struk #{{ $transaksi->id_transaksi }}</title>
     <style>
         body {
             font-family: 'Courier New', Courier, monospace;
-            width: 58mm; /* Ukuran standar kertas thermal */
+            font-size: 12px;
+            max-width: 300px; /* Lebar kertas thermal */
             margin: 0 auto;
             padding: 10px;
-            font-size: 12px;
-            color: #000;
         }
-        .text-center { text-align: center; }
+        .header, .footer {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .header h2 { margin: 0; font-size: 16px; }
+        .header p { margin: 2px 0; font-size: 10px; }
+        hr { border: 1px dashed #000; }
+        table { width: 100%; border-collapse: collapse; }
+        td { vertical-align: top; }
         .text-right { text-align: right; }
-        .divider {
-            border-top: 1px dashed #000;
-            margin: 10px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .item-name {
-            font-weight: bold;
-            display: block;
-            margin-top: 5px;
-        }
-        .item-detail {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 10px;
-            line-height: 1.2;
-        }
-        /* Hilangkan header/footer browser saat print */
+        .total-row { font-weight: bold; border-top: 1px dashed #000; }
+        
         @media print {
-            @page { margin: 0; }
-            body { margin: 1.6cm; }
-            .no-print { display: none; }
+            body { margin: 0; padding: 0; }
+            button { display: none; }
         }
     </style>
 </head>
-<body onload="window.print();">
+<body onload="window.print()">
 
-    <div class="text-center">
-        <h3 style="margin: 0; text-transform: uppercase;">{{ $toko->nama_toko ?? 'POS SYSTEM' }}</h3>
-        <p style="margin: 5px 0 0 0; font-size: 10px;">{{ $toko->deskripsi ?? 'Alamat belum diatur' }}</p>
+    <div class="header">
+        <h2>PEMASARAN PRODUK DAUR ULANG</h2>
+        <p>Jl. Perdagangan</p>
+        <p>Telp: 0123456789</p>
     </div>
 
-    <div class="divider"></div>
+    <hr>
 
-    <table style="font-size: 11px;">
+    <table>
         <tr>
-            <td>Nota: {{ $transaksi->id_transaksi }}</td>
+            <td>No. Nota</td>
+            <td class="text-right">{{ $transaksi->id_transaksi }}</td>
         </tr>
         <tr>
-            <td>Tgl : {{ date('d/m/y H:i', strtotime($transaksi->tgl_transaksi)) }}</td>
+            <td>Tanggal</td>
+            <td class="text-right">{{ date('d/m/Y H:i', strtotime($transaksi->tgl_transaksi)) }}</td>
         </tr>
         <tr>
-            <td>Kasir: {{ Auth::user()->nama }}</td>
+            <td>Kasir</td>
+            <td class="text-right">{{ $transaksi->user->name ?? 'Admin' }}</td>
         </tr>
     </table>
 
-    <div class="divider"></div>
+    <hr>
 
-    @foreach($details as $item)
-    <span class="item-name">{{ $item->nama_produk }}</span>
-    <div class="item-detail">
-        <span>{{ $item->qty }} x {{ number_format($item->subtotal / $item->qty, 0, ',', '.') }}</span>
-        <span>{{ number_format($item->subtotal, 0, ',', '.') }}</span>
-    </div>
-    @endforeach
-
-    <div class="divider"></div>
-
-    <table style="font-weight: bold;">
+    <table>
+        @foreach($transaksi->details as $detail)
         <tr>
-            <td>TOTAL</td>
-            <td class="text-right">Rp{{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+            <td colspan="2">{{ $detail->nama_produk }}</td>
+        </tr>
+        <tr>
+            <td>{{ $detail->qty }} x {{ number_format($detail->harga_satuan, 0, ',', '.') }}</td>
+            <td class="text-right">{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+        </tr>
+        @endforeach
+    </table>
+
+    <hr>
+
+    <table>
+        <tr class="total-row">
+            <td style="padding-top: 5px;">TOTAL</td>
+            <td class="text-right" style="padding-top: 5px; font-size: 14px;">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>Bayar</td>
+            <td class="text-right">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>Kembali</td>
+            <td class="text-right">Rp 0</td>
         </tr>
     </table>
 
-    <div class="divider"></div>
+    <hr>
 
-    <div class="text-center footer">
-        <p>TERIMA KASIH</p>
-        <p>Barang yang sudah dibeli tidak dapat ditukar atau dikembalikan.</p>
-    </div>
-
-    <div class="text-center no-print" style="margin-top: 20px;">
-        <button onclick="window.print()" style="padding: 5px 10px; cursor: pointer;">Klik Cetak Manual</button>
-        <br><br>
-        <a href="{{ route('transaksi.history') }}" style="color: blue; text-decoration: none; font-size: 10px;"> Kembali ke Riwayat</a>
+    <div class="footer">
+        <p>Terima Kasih atas Kunjungan Anda</p>
+        <p>Barang yang dibeli tidak dapat ditukar</p>
     </div>
 
 </body>
