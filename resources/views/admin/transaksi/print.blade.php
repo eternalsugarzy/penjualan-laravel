@@ -51,7 +51,7 @@
         </tr>
         <tr>
             <td>Kasir</td>
-            <td class="text-right">{{ $transaksi->user->name ?? 'Admin' }}</td>
+            <td class="text-right">{{ $transaksi->user->nama ?? 'Admin' }}</td>
         </tr>
     </table>
 

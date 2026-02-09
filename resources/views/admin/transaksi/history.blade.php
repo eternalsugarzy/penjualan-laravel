@@ -46,7 +46,7 @@
                     </td>
                     <td class="p-4 text-center">
                         <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold uppercase">
-                            {{ $trx->user->name ?? 'Unknown' }}
+                            {{ $trx->user->nama ?? 'Unknown' }}
                         </span>
                     </td>
                     <td class="p-4 text-center">

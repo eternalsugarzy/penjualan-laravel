@@ -9,7 +9,7 @@
 <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-3xl p-8 text-white shadow-xl shadow-slate-200 relative overflow-hidden mb-6">
     <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
         <div>
-            <h1 class="text-3xl font-bold text-amber-400">Halo, {{ Auth::user()->name ?? 'Admin' }}! 👋</h1>
+            <h1 class="text-3xl font-bold text-amber-400">Halo, {{ Auth::user()->nama ?? 'Admin' }}! 👋</h1>
             <p class="mt-2 text-slate-300 max-w-xl leading-relaxed">
                 Selamat datang kembali di Panel Admin <b>Pemasaran Produk Daur Ulang</b>. 
                 Pantau performa penjualan hari ini dan kelola inventaris dengan lebih mudah.
@@ -112,7 +112,7 @@
                 <h3 class="text-lg font-black text-slate-800 uppercase tracking-wide">Visi Kami</h3>
             </div>
             <p class="text-slate-600 leading-relaxed italic border-l-4 border-blue-500 pl-4">
-                "Sebagai acuan dalam melaksanakan tugas dan fungsinya, Dinas Lingkungan Hidup Kota Banjarmasin memiliki Visi “Terwujudnya Pembangunan yang Berkelanjutan dan Berwawasan Lingkungan Hidup Menuju Banjarmasin Bersih, Indah dan Nyaman."
+                “Terwujudnya Pembangunan yang Berkelanjutan dan Berwawasan Lingkungan Hidup Menuju Banjarmasin Bersih, Indah dan Nyaman."
             </p>
         </div>
 

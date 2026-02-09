@@ -61,7 +61,7 @@
                class="flex items-center p-3 rounded-xl transition hover:bg-slate-800 hover:text-white group">
                 <i class="fas fa-file-invoice-dollar w-6 text-sm"></i> 
                 <span class="text-sm">Pembelian</span>
-                <span class="ml-auto bg-slate-700 text-[9px] px-2 py-0.5 rounded-full text-slate-300">Soon</span>
+                
             </a>
 
             <a href="{{ route('bank.index') }}" 
@@ -78,11 +78,7 @@
                 <span class="text-sm">Supplier</span>
             </a>
 
-            <a href="{{ route('return.index') }}" 
-               class="flex items-center p-3 rounded-xl transition hover:bg-slate-800 hover:text-white">
-                <i class="fas fa-undo w-6 text-sm"></i> 
-                <span class="text-sm">Return Barang</span>
-            </a>
+           
 
             <p class="text-[10px] font-bold text-slate-500 uppercase px-4 mt-6 mb-2 tracking-widest">Sistem</p>
             
