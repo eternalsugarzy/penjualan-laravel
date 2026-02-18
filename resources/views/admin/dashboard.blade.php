@@ -67,21 +67,21 @@
     <div class="swiper mySwiper rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
         <div class="swiper-wrapper">
             <div class="swiper-slide relative h-[450px]">
-                <img src="{{ asset('img/carousel1.jpeg') }}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x500?text=Foto+1+Belum+Ada'">
+                <img src="{{ asset('img/tempatPKL.jpeg') }}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x500?text=Foto+1+Belum+Ada'">
                 <div class="absolute bottom-0 left-0 w-full p-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white">
                     <h3 class="text-2xl font-black uppercase tracking-tight">Lokasi Workshop PKL</h3>
                     <p class="text-slate-200 text-sm opacity-90">Dinas Lingkungan Hidup Kota Banjarmasin</p>
                 </div>
             </div>
             <div class="swiper-slide relative h-[450px]">
-                <img src="{{ asset('img/carousel2.jpeg') }}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x500?text=Foto+2+Belum+Ada'">
+                <img src="{{ asset('img/logodlh.jpeg') }}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x500?text=Foto+2+Belum+Ada'">
                 <div class="absolute bottom-0 left-0 w-full p-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white">
                     <h3 class="text-2xl font-black uppercase tracking-tight">Lokasi Workshop PKL</h3>
                     <p class="text-slate-200 text-sm opacity-90">Dinas Lingkungan Hidup Kota Banjarmasin</p>
                 </div>
             </div>
             <div class="swiper-slide relative h-[450px]">
-                <img src="{{ asset('img/carousel3.jpeg') }}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x500?text=Foto+3+Belum+Ada'">
+                <img src="{{ asset('img/pemko2.jpeg') }}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x500?text=Foto+3+Belum+Ada'">
                 <div class="absolute bottom-0 left-0 w-full p-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white">
                     <h3 class="text-2xl font-black uppercase tracking-tight">Lokasi Workshop PKL</h3>
                     <p class="text-slate-200 text-sm opacity-90">Dinas Lingkungan Hidup Kota Banjarmasin</p>
